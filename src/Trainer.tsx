@@ -125,19 +125,21 @@ const Trainer = (props: RouteComponentProps) => {
     }
 
     const startGame = (list: Array<string>) => {
+        const auf0List = ["", "U ", "U' ", "U2 "]
         const aufList = ["", " U", " U'", " U2"]
         const slotIndex = Math.floor(Math.random() * 3)
+        const auf0Index = Math.floor(Math.random() * auf0List.length)
         const zblsIndex = Math.floor(Math.random() * zblsFrList.length)
         const auf1Index = Math.floor(Math.random() * aufList.length)
         const zbllIndex = Math.floor(Math.random() * zbllList.length)
         const auf2Index = Math.floor(Math.random() * aufList.length)
         let alg = ""
         if (slotIndex === 0) {
-            alg = `${zblsFrList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
+            alg = `${auf0List[auf0Index]}${zblsFrList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
         } else if (slotIndex === 1) {
-            alg = `${zblsBrList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
+            alg = `${auf0List[auf0Index]}${zblsBrList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
         } else if (slotIndex === 2) {
-            alg = `${zblsFlList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
+            alg = `${auf0List[auf0Index]}${zblsFlList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
         }
         // } else if (slotIndex === 3) {
         //     alg = `${zblsBlList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
