@@ -16,6 +16,9 @@ const Trainer = (props: RouteComponentProps) => {
         box: {
             marginBottom: '10px'
         },
+        prevScrambleBlock: {
+            backgroundColor: '#ededed'
+        },
         scrambleBlock: {
             backgroundColor: '#dddddd'
         },
@@ -42,6 +45,7 @@ const Trainer = (props: RouteComponentProps) => {
     const [isTimerRunning, setIsTimerRunning] = useState(false)
     const [timeList, setTimeList] = useState(Array<string>())
     const [scramble, setScramble] = useState("")
+    const [prevScramble, setPrevScramble] = useState("")
     const [zbllList, setZbllList] = useState(Array<string>())
     const [zblsFrList, setZblsFrList] = useState(Array<string>())
     const [zblsBrList, setZblsBrList] = useState(Array<string>())
@@ -122,7 +126,7 @@ const Trainer = (props: RouteComponentProps) => {
 
     const startGame = (list: Array<string>) => {
         const aufList = ["", " U", " U'", " U2"]
-        const slotIndex = Math.floor(Math.random() * 4)
+        const slotIndex = Math.floor(Math.random() * 3)
         const zblsIndex = Math.floor(Math.random() * zblsFrList.length)
         const auf1Index = Math.floor(Math.random() * aufList.length)
         const zbllIndex = Math.floor(Math.random() * zbllList.length)
@@ -134,9 +138,10 @@ const Trainer = (props: RouteComponentProps) => {
             alg = `${zblsBrList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
         } else if (slotIndex === 2) {
             alg = `${zblsFlList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
-        } else if (slotIndex === 3) {
-            alg = `${zblsBlList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
         }
+        // } else if (slotIndex === 3) {
+        //     alg = `${zblsBlList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
+        // }
         const [newRotationLessSolutionList, newRotationList] = algUtil.makeRotationLessAlg(alg.split(" "))
         setScramble(twoPhase.solve(newRotationLessSolutionList.join(" ")))
     }
@@ -154,6 +159,7 @@ const Trainer = (props: RouteComponentProps) => {
                 moment(time * 10).format('m:ss.SS')
             ])
         }
+        setPrevScramble(scramble)
         startGame(algList)
     }
 
@@ -224,6 +230,11 @@ const Trainer = (props: RouteComponentProps) => {
                 <Box className={classes.timeListBlock} display={"flex"}>
                     <Typography>
                         &nbsp; {timeList.join(", ")}
+                    </Typography>
+                </Box>
+                <Box className={classes.prevScrambleBlock} display={"flex"} justifyContent={"center"}>
+                    <Typography>
+                        Prev Scramble: {prevScramble}
                     </Typography>
                 </Box>
             </Box>
