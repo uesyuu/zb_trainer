@@ -174,7 +174,7 @@ const Trainer = (props: RouteComponentProps) => {
         <div>
             <AppBar position={"relative"}>
                 <Toolbar>
-                    <Typography>Alg Trainer</Typography>
+                    <Typography>ZB Trainer</Typography>
                 </Toolbar>
             </AppBar>
             <Box className={classes.container} maxWidth={"xs"} display={"flex"} flexDirection={"column"}>
