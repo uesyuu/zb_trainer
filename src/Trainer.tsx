@@ -16,6 +16,9 @@ const Trainer = (props: RouteComponentProps) => {
         box: {
             marginBottom: '10px'
         },
+        countBlock: {
+            backgroundColor: '#ededed'
+        },
         prevScrambleBlock: {
             backgroundColor: '#ededed'
         },
@@ -141,9 +144,6 @@ const Trainer = (props: RouteComponentProps) => {
         } else if (slotIndex === 2) {
             alg = `${auf0List[auf0Index]}${zblsFlList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
         }
-        // } else if (slotIndex === 3) {
-        //     alg = `${zblsBlList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
-        // }
         const [newRotationLessSolutionList, newRotationList] = algUtil.makeRotationLessAlg(alg.split(" "))
         setScramble(twoPhase.solve(newRotationLessSolutionList.join(" ")))
     }
@@ -201,43 +201,49 @@ const Trainer = (props: RouteComponentProps) => {
                     PC: スペースキー押下<br/>
                     スマホ: タイマー部分タップ
                 </Typography>
-                <Box className={classes.scrambleBlock} display={"flex"} justifyContent={"center"}>
-                    <Typography>
-                        Scramble: {scramble}
-                    </Typography>
-                </Box>
-                <Box display={"flex"}>
-                    <Box className={classes.imageBlock} display={"flex"}>
-                        <img
-                            src={"https://cubing.net/api/visualcube/?fmt=svg&r=x-30y30z15&bg=t&size=150&pzl=3&alg=" + scramble.replace(/\s+/g, "")}
-                            alt={""}
-                        />
-                    </Box>
-                    <Box className={classes.timerBlock}
-                         display={"flex"}
-                         justifyContent={"center"}
-                         alignItems={"center"}
-                         flexGrow={1}
-                         onTouchStart={onTouchTimerView}>
-                        <Typography variant={"h4"}>
-                            {moment(time * 10).format('mm:ss.SS')}
+                <Box onTouchStart={onTouchTimerView}>
+                    <Box className={classes.countBlock} display={"flex"} justifyContent={"center"}>
+                        <Typography>
+                            Count: {timeList.length}
                         </Typography>
                     </Box>
-                </Box>
-                <Box className={classes.timeListTitleBlock} display={"flex"}>
-                    <Typography>
-                        Time List:
-                    </Typography>
-                </Box>
-                <Box className={classes.timeListBlock} display={"flex"}>
-                    <Typography>
-                        &nbsp; {timeList.join(", ")}
-                    </Typography>
-                </Box>
-                <Box className={classes.prevScrambleBlock} display={"flex"} justifyContent={"center"}>
-                    <Typography>
-                        Prev Scramble: {prevScramble}
-                    </Typography>
+                    <Box className={classes.scrambleBlock} display={"flex"} justifyContent={"center"}>
+                        <Typography>
+                            Scramble: {scramble}
+                        </Typography>
+                    </Box>
+                    <Box display={"flex"}>
+                        <Box className={classes.imageBlock} display={"flex"}>
+                            <img
+                                src={"https://cubing.net/api/visualcube/?fmt=svg&r=x-30y30z15&bg=t&size=150&pzl=3&alg=" + scramble.replace(/\s+/g, "")}
+                                alt={""}
+                            />
+                        </Box>
+                        <Box className={classes.timerBlock}
+                             display={"flex"}
+                             justifyContent={"center"}
+                             alignItems={"center"}
+                             flexGrow={1}>
+                            <Typography variant={"h4"}>
+                                {moment(time * 10).format('mm:ss.SS')}
+                            </Typography>
+                        </Box>
+                    </Box>
+                    <Box className={classes.timeListTitleBlock} display={"flex"}>
+                        <Typography>
+                            Time List:
+                        </Typography>
+                    </Box>
+                    <Box className={classes.timeListBlock} display={"flex"}>
+                        <Typography>
+                            &nbsp; {timeList.join(", ")}
+                        </Typography>
+                    </Box>
+                    <Box className={classes.prevScrambleBlock} display={"flex"} justifyContent={"center"}>
+                        <Typography>
+                            Prev Scramble: {prevScramble}
+                        </Typography>
+                    </Box>
                 </Box>
             </Box>
         </div>
