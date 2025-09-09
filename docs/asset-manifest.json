@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "/zb_trainer/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/zb_trainer/static/js/main.73cd316d.chunk.js",
-    "main.js.map": "/zb_trainer/static/js/main.73cd316d.chunk.js.map",
+    "main.js": "/zb_trainer/static/js/main.db20912a.chunk.js",
+    "main.js.map": "/zb_trainer/static/js/main.db20912a.chunk.js.map",
     "runtime-main.js": "/zb_trainer/static/js/runtime-main.631b778e.js",
     "runtime-main.js.map": "/zb_trainer/static/js/runtime-main.631b778e.js.map",
-    "static/js/2.5aa129cf.chunk.js": "/zb_trainer/static/js/2.5aa129cf.chunk.js",
-    "static/js/2.5aa129cf.chunk.js.map": "/zb_trainer/static/js/2.5aa129cf.chunk.js.map",
+    "static/js/2.4ac97626.chunk.js": "/zb_trainer/static/js/2.4ac97626.chunk.js",
+    "static/js/2.4ac97626.chunk.js.map": "/zb_trainer/static/js/2.4ac97626.chunk.js.map",
     "index.html": "/zb_trainer/index.html",
     "static/css/main.6dea0f05.chunk.css.map": "/zb_trainer/static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.5aa129cf.chunk.js.LICENSE.txt": "/zb_trainer/static/js/2.5aa129cf.chunk.js.LICENSE.txt"
+    "static/js/2.4ac97626.chunk.js.LICENSE.txt": "/zb_trainer/static/js/2.4ac97626.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.631b778e.js",
-    "static/js/2.5aa129cf.chunk.js",
+    "static/js/2.4ac97626.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.73cd316d.chunk.js"
+    "static/js/main.db20912a.chunk.js"
   ]
 }

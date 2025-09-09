@@ -1,10 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
-import {AppBar, Box, Button, makeStyles, Toolbar, Typography} from "@material-ui/core";
+import {AppBar, Box, makeStyles, Toolbar, Typography} from "@material-ui/core";
 import moment from "moment";
 import twoPhase from './lib/twophase'
 import algUtil from './lib/algUtil'
 import {RouteComponentProps} from "react-router-dom";
-import {RouterState} from "./types/routerState";
 
 const Trainer = (props: RouteComponentProps) => {
     const useStyles = makeStyles(() => ({
@@ -44,7 +43,6 @@ const Trainer = (props: RouteComponentProps) => {
 
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const [time, setTime] = useState(0); // センチ秒
-    const [algList, setAlgList] = useState(Array<string>())
     const [isTimerRunning, setIsTimerRunning] = useState(false)
     const [timeList, setTimeList] = useState(Array<string>())
     const [scramble, setScramble] = useState("")
@@ -95,16 +93,10 @@ const Trainer = (props: RouteComponentProps) => {
 
     useEffect(() => {
         twoPhase.initialize()
-        if (props.location.state) {
-            const algListInState = props.location.state as RouterState
-            setAlgList(algListInState.algList)
-            if (zbllList.length > 0 && zblsFrList.length > 0 && zblsBrList.length > 0 && zblsFlList.length > 0 && zblsBlList.length > 0) {
-                startGame(algListInState.algList)
-            }
-        } else {
-            props.history.push("/")
+        if (zbllList.length > 0 && zblsFrList.length > 0 && zblsBrList.length > 0 && zblsFlList.length > 0 && zblsBlList.length > 0) {
+            startGame()
         }
-    }, [props.history, props.location.state, zbllList, zblsFrList, zblsBrList, zblsFlList, zblsBlList])
+    }, [zbllList, zblsFrList, zblsBrList, zblsFlList, zblsBlList])
 
     document.onkeydown = (event) => {
         if (event.code === "Space") {
@@ -127,7 +119,7 @@ const Trainer = (props: RouteComponentProps) => {
         }
     }
 
-    const startGame = (list: Array<string>) => {
+    const startGame = () => {
         const auf0List = ["", "U ", "U' ", "U2 "]
         const aufList = ["", " U", " U'", " U2"]
         const slotIndex = Math.floor(Math.random() * 3)
@@ -162,7 +154,7 @@ const Trainer = (props: RouteComponentProps) => {
             ])
         }
         setPrevScramble(scramble)
-        startGame(algList)
+        startGame()
     }
 
     const startTimer = () => {
@@ -186,16 +178,6 @@ const Trainer = (props: RouteComponentProps) => {
                 </Toolbar>
             </AppBar>
             <Box className={classes.container} maxWidth={"xs"} display={"flex"} flexDirection={"column"}>
-                <Box className={classes.box} display={"flex"} justifyContent={"space-between"}>
-                    <Button variant='contained' onClick={() => props.history.push({
-                        pathname: "/",
-                        state: {
-                            algList: algList
-                        }
-                    })}>
-                        戻る
-                    </Button>
-                </Box>
                 <Typography className={classes.box}>
                     スタート/ストップ方法<br/>
                     PC: スペースキー押下<br/>
