@@ -55,7 +55,7 @@ const Trainer = (props: RouteComponentProps) => {
     const [zblsFlList, setZblsFlList] = useState(Array<Array<string>>())
     const [zblsBlList, setZblsBlList] = useState(Array<Array<string>>())
     const [openZblsSelect, setOpenZblsSelect] = useState(false)
-    const [selectedIndexList, setSelectedIndexList] = useState(Array<boolean>(true))
+    const [selectedIndexList, setSelectedIndexList] = useState(Array<boolean>())
 
     useEffect(() => {
         fetch(process.env.PUBLIC_URL + "/zbll.txt")
@@ -98,9 +98,15 @@ const Trainer = (props: RouteComponentProps) => {
     useEffect(() => {
         twoPhase.initialize()
         if (zbllList.length > 0 && zblsFrList.length > 0 && zblsBrList.length > 0 && zblsFlList.length > 0 && zblsBlList.length > 0) {
+            setSelectedIndexList(Array(zblsFlList.length).fill(true))
+        }
+    }, [zbllList, zblsFrList, zblsBrList, zblsFlList, zblsBlList]);
+
+    useEffect(() => {
+        if (selectedIndexList.length > 0) {
             startGame()
         }
-    }, [zbllList, zblsFrList, zblsBrList, zblsFlList, zblsBlList])
+    }, [selectedIndexList])
 
     document.onkeydown = (event) => {
         if (event.code === "Space") {
