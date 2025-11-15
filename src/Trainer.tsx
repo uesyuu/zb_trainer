@@ -98,7 +98,7 @@ const Trainer = (props: RouteComponentProps) => {
     useEffect(() => {
         twoPhase.initialize()
         if (zbllList.length > 0 && zblsFrList.length > 0 && zblsBrList.length > 0 && zblsFlList.length > 0 && zblsBlList.length > 0) {
-            setSelectedIndexList(Array(zblsFlList.length).fill(false))
+            setSelectedIndexList(Array(zblsFlList.length).fill(true))
             startGame()
         }
     }, [zbllList, zblsFrList, zblsBrList, zblsFlList, zblsBlList])
