@@ -56,6 +56,9 @@ const Trainer = (props: RouteComponentProps) => {
     const [zblsBlList, setZblsBlList] = useState(Array<Array<string>>())
     const [openZblsSelect, setOpenZblsSelect] = useState(false)
     const [selectedIndexList, setSelectedIndexList] = useState(Array<boolean>())
+    const [openSlotSelect, setOpenSlotSelect] = useState(false)
+    const [slotFcList, setSlotFcList] = useState(Array<string>())
+    const [selectedSlotIndexList, setSelectedSlotIndexList] = useState(Array<boolean>())
 
     useEffect(() => {
         fetch(process.env.PUBLIC_URL + "/zbll.txt")
@@ -100,13 +103,19 @@ const Trainer = (props: RouteComponentProps) => {
         if (zbllList.length > 0 && zblsFrList.length > 0 && zblsBrList.length > 0 && zblsFlList.length > 0 && zblsBlList.length > 0) {
             setSelectedIndexList(Array(zblsFlList.length).fill(true))
         }
+        setSlotFcList([
+            "dddddddddddddrrdrrdddbbdbbdwwwwwwwwwoooooooooggggggggg",
+            "ddddddddddddrrdrrddddbbbbbbwwwwwwwwwoooooooooggggggggg",
+            "ddddddddddddrrrrrrddddbbdbbwwwwwwwwwoooooooooggggggggg"
+        ])
+        setSelectedSlotIndexList(Array(3).fill(true))
     }, [zbllList, zblsFrList, zblsBrList, zblsFlList, zblsBlList]);
 
     useEffect(() => {
-        if (selectedIndexList.length > 0) {
+        if (selectedIndexList.length > 0 && slotFcList.length > 0 && selectedSlotIndexList.length > 0) {
             startGame()
         }
-    }, [selectedIndexList])
+    }, [selectedIndexList, slotFcList])
 
     document.onkeydown = (event) => {
         if (event.code === "Space") {
@@ -154,7 +163,16 @@ const Trainer = (props: RouteComponentProps) => {
     }
 
     const startGame = () => {
-        const slotIndex = Math.floor(Math.random() * 3)
+        const trueIndexes = selectedSlotIndexList
+            .map((value, index) => value ? index : null)
+            .filter(index => index !== null);
+
+        if (trueIndexes.length === 0) {
+            setScramble("スロットを選んでください")
+            return
+        }
+
+        const slotIndex = trueIndexes[Math.floor(Math.random() * trueIndexes.length)];
 
         let tmpZblsList = Array<string>()
         for (let i = 0; i < selectedIndexList.length; i++) {
@@ -219,6 +237,10 @@ const Trainer = (props: RouteComponentProps) => {
         setSelectedIndexList(selectedIndexList.map((v, i) => i === num ? !v : v))
     }
 
+    const selectSlotImage = (num: number) => {
+        setSelectedSlotIndexList(selectedSlotIndexList.map((v, i) => i === num ? !v : v))
+    }
+
     return (
         <div>
             <AppBar position={"relative"}>
@@ -227,13 +249,30 @@ const Trainer = (props: RouteComponentProps) => {
                 </Toolbar>
             </AppBar>
             <Box className={classes.container} maxWidth={"xs"} display={"flex"} flexDirection={"column"}>
-                <Box display={"flex"} justifyContent={"space-between"}>
+                <Box display="flex" justifyContent="space-between" alignItems="flex-start">
                     <Typography className={classes.box}>
                         スタート/ストップ方法<br/>
                         PC: スペースキー押下<br/>
                         スマホ: タイマー部分タップ
                     </Typography>
-                    <MyButton color={"primary"} width={"150px"} onClick={() => setOpenZblsSelect(true)}>ZBLS選択</MyButton>
+
+                    <Box display="flex" flexDirection="column">
+                        <MyButton
+                            color="primary"
+                            width="150px"
+                            onClick={() => setOpenZblsSelect(true)}
+                        >
+                            ZBLS選択
+                        </MyButton>
+
+                        <MyButton
+                            color="primary"
+                            width="150px"
+                            onClick={() => setOpenSlotSelect(true)}
+                        >
+                            スロット選択
+                        </MyButton>
+                    </Box>
                 </Box>
                 <Box onTouchStart={onTouchTimerView}>
                     <Box className={classes.countBlock} display={"flex"} justifyContent={"center"}>
@@ -309,6 +348,38 @@ const Trainer = (props: RouteComponentProps) => {
                                 }}
                             />
                             {((i < 36 && i % 2 === 1) || i === 36 || (i > 36 && i % 2 === 0)) && <br />}
+                        </>
+                    )}
+                </DialogContent>
+            </Dialog>
+            <Dialog open={openSlotSelect} onClose={() => {
+                setOpenSlotSelect(false)
+                startGame()
+            }}>
+                <Box display={"flex"} justifyContent={"center"}>
+                    <MyButton
+                        color={"primary"}
+                        width={"120px"}
+                        onClick={() => setSelectedSlotIndexList(selectedSlotIndexList.map(() => false))}
+                    >選択を解除</MyButton>
+                    <MyButton
+                        color={"default"}
+                        width={"120px"}
+                        onClick={() => setSelectedSlotIndexList(selectedSlotIndexList.map(() => true))}
+                    >すべて選択</MyButton>
+                </Box>
+                <DialogContent>
+                    {slotFcList.map((fc, i) =>
+                        <>
+                            <img
+                                src={`https://visualcube.api.cubing.net/visualcube.php?fmt=svg&size=100&pzl=3&r=y30x-30&fc=${fc}`}
+                                onClick={() => selectSlotImage(i)}
+                                style={{
+                                    cursor: "pointer",
+                                    transition: "0.2s",
+                                    opacity: selectedSlotIndexList[i] ? 1 : 0.5
+                                }}
+                            />
                         </>
                     )}
                 </DialogContent>
