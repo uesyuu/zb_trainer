@@ -59,6 +59,9 @@ const Trainer = (props: RouteComponentProps) => {
     const [openSlotSelect, setOpenSlotSelect] = useState(false)
     const [slotFcList, setSlotFcList] = useState(Array<string>())
     const [selectedSlotIndexList, setSelectedSlotIndexList] = useState(Array<boolean>())
+    const [isRecap, setIsRecap] = useState(false)
+    const [recapZblsList, setRecapZblsList] = useState(Array<string>())
+    const [recapZblsListLength, setRecapZblsListLength] = useState(0)
 
     useEffect(() => {
         fetch(process.env.PUBLIC_URL + "/zbll.txt")
@@ -113,7 +116,7 @@ const Trainer = (props: RouteComponentProps) => {
 
     useEffect(() => {
         if (selectedIndexList.length > 0 && slotFcList.length > 0 && selectedSlotIndexList.length > 0) {
-            startGame()
+            startGame(false)
         }
     }, [selectedIndexList, slotFcList])
 
@@ -162,7 +165,7 @@ const Trainer = (props: RouteComponentProps) => {
         }
     }
 
-    const startGame = () => {
+    const startGame = (isRecap: boolean) => {
         const trueIndexes = selectedSlotIndexList
             .map((value, index) => value ? index : null)
             .filter(index => index !== null);
@@ -172,19 +175,26 @@ const Trainer = (props: RouteComponentProps) => {
             return
         }
 
-        const slotIndex = trueIndexes[Math.floor(Math.random() * trueIndexes.length)];
-
         let tmpZblsList = Array<string>()
-        for (let i = 0; i < selectedIndexList.length; i++) {
-            if (selectedIndexList[i]) {
-                if (slotIndex === 0) {
-                    tmpZblsList = tmpZblsList.concat(zblsFrList[i])
-                } else if (slotIndex === 1) {
-                    tmpZblsList = tmpZblsList.concat(zblsBrList[i])
-                } else if (slotIndex === 2) {
-                    tmpZblsList = tmpZblsList.concat(zblsFlList[i])
+        if (isRecap && recapZblsList.length > 0) {
+            tmpZblsList = recapZblsList
+        } else {
+            for (let i = 0; i < selectedIndexList.length; i++) {
+                if (selectedIndexList[i]) {
+                    for (let j = 0; j < trueIndexes.length; j++) {
+                        if (trueIndexes[j] === 0) {
+                            tmpZblsList = tmpZblsList.concat(zblsFrList[i])
+                        } else if (trueIndexes[j] === 1) {
+                            tmpZblsList = tmpZblsList.concat(zblsBrList[i])
+                        } else if (trueIndexes[j] === 2) {
+                            tmpZblsList = tmpZblsList.concat(zblsFlList[i])
+                        }
+                    }
                 }
             }
+        }
+        if (isRecap && recapZblsList.length === 0) {
+            setRecapZblsListLength(tmpZblsList.length)
         }
 
         if (tmpZblsList.length > 0) {
@@ -198,6 +208,9 @@ const Trainer = (props: RouteComponentProps) => {
             const alg = `${auf0List[auf0Index]}${tmpZblsList[zblsIndex]}${aufList[auf1Index]} ${zbllList[zbllIndex]}${aufList[auf2Index]}`
             const [newRotationLessSolutionList, newRotationList] = algUtil.makeRotationLessAlg(alg.split(" "))
             setScramble(twoPhase.solve(newRotationLessSolutionList.join(" ")))
+            if (isRecap) {
+                setRecapZblsList(tmpZblsList.filter((_, index) => index !== zblsIndex))
+            }
         } else {
             setScramble("ZBLSを選んでください")
         }
@@ -217,7 +230,13 @@ const Trainer = (props: RouteComponentProps) => {
             ])
         }
         setPrevScramble(scramble)
-        startGame()
+        if (isRecap && recapZblsList.length === 0) {
+            setRecapZblsListLength(0)
+            setIsRecap(false)
+            startGame(false)
+        } else {
+            startGame(isRecap)
+        }
     }
 
     const startTimer = () => {
@@ -241,6 +260,20 @@ const Trainer = (props: RouteComponentProps) => {
         setSelectedSlotIndexList(selectedSlotIndexList.map((v, i) => i === num ? !v : v))
     }
 
+    const resetTimeList = () => {
+        setTimeList([])
+        setTime(0)
+    }
+
+    const toggleRecapMode = () => {
+        const flag = !isRecap
+        if (!flag) {
+            setRecapZblsList([])
+        }
+        setIsRecap(flag)
+        startGame(flag)
+    }
+
     return (
         <div>
             <AppBar position={"relative"}>
@@ -250,11 +283,23 @@ const Trainer = (props: RouteComponentProps) => {
             </AppBar>
             <Box className={classes.container} maxWidth={"xs"} display={"flex"} flexDirection={"column"}>
                 <Box display="flex" justifyContent="space-between" alignItems="flex-start">
-                    <Typography className={classes.box}>
-                        スタート/ストップ方法<br/>
-                        PC: スペースキー押下<br/>
-                        スマホ: タイマー部分タップ
-                    </Typography>
+                    <Box display="flex" flexDirection="column">
+                        <MyButton
+                            color={isRecap ? "secondary" : "primary"}
+                            width="150px"
+                            onClick={() => toggleRecapMode()}
+                        >
+                            Recap
+                        </MyButton>
+
+                        <MyButton
+                            color="primary"
+                            width="150px"
+                            onClick={() => resetTimeList()}
+                        >
+                            リセット
+                        </MyButton>
+                    </Box>
 
                     <Box display="flex" flexDirection="column">
                         <MyButton
@@ -277,7 +322,7 @@ const Trainer = (props: RouteComponentProps) => {
                 <Box onTouchStart={onTouchTimerView}>
                     <Box className={classes.countBlock} display={"flex"} justifyContent={"center"}>
                         <Typography>
-                            Count: {timeList.length}
+                            Count: {timeList.length}{isRecap && `, Recap: ${recapZblsList.length + 1} / ${recapZblsListLength}`}
                         </Typography>
                     </Box>
                     <Box className={classes.scrambleBlock} display={"flex"} justifyContent={"center"}>
@@ -321,7 +366,7 @@ const Trainer = (props: RouteComponentProps) => {
             </Box>
             <Dialog open={openZblsSelect} onClose={() => {
                 setOpenZblsSelect(false)
-                startGame()
+                startGame(isRecap)
             }}>
                 <Box display={"flex"} justifyContent={"center"}>
                     <MyButton
@@ -354,7 +399,7 @@ const Trainer = (props: RouteComponentProps) => {
             </Dialog>
             <Dialog open={openSlotSelect} onClose={() => {
                 setOpenSlotSelect(false)
-                startGame()
+                startGame(isRecap)
             }}>
                 <Box display={"flex"} justifyContent={"center"}>
                     <MyButton
